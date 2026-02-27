@@ -170,15 +170,25 @@
 
         <table class="inventory-table">
             <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Item</th>
-                    <th>Category</th>
-                    <th>Coord</th>
-                    <th>Qty</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                </tr>
+                <th>Status</th>
+<th>Date</th>
+<th>Actions</th> ```
+
+**2. Update the `logItem()` Function**
+Replace the part of your code that creates the `row` with this updated version:
+```javascript
+// Add to local UI table with a delete button
+const row = `<tr>
+    <td>${item.id}</td>
+    <td>${item.name}</td>
+    <td>${item.category}</td>
+    <td>${item.coord}</td>
+    <td>${item.qty}</td>
+    <td>${item.status}</td>
+    <td>${item.date}</td>
+    <td><button onclick="deleteRow(this)" style="background: #e74c3c; padding: 5px 10px; width: auto;">Delete</button></td>
+</tr>`;
+table.innerHTML += row;
             </thead>
             <tbody id="inventoryBody">
                 </tbody>
@@ -247,6 +257,12 @@
             }
         }
     }
+    function deleteRow(btn) {
+    if(confirm("Are you sure you want to remove this item from the list?")) {
+        var row = btn.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+    }
+}
 </script>
 
 </body>
