@@ -25,7 +25,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             width: 100%;
             background: white;
             padding: 30px;
@@ -92,16 +92,10 @@
             background-color: #4e342e;
         }
 
-        .search-container {
-            margin-top: 30px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 20px;
-        }
-
         .inventory-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .inventory-table th, .inventory-table td {
@@ -116,9 +110,7 @@
             color: var(--workshop-accent);
         }
 
-        .low-stock {
-            background-color: var(--low-stock-warning) !important;
-        }
+        .low-stock { background-color: var(--low-stock-warning) !important; }
 
         .delete-btn {
             background-color: #e74c3c;
@@ -139,167 +131,168 @@
     <div class="input-grid">
         <div class="input-group">
             <label>Item Name</label>
-            <input type="text" id="itemName" placeholder="e.g. Wood Glue">
+            <input type="text" id="itemName" placeholder="e.g. Ryoba Saw">
         </div>
+
         <div class="input-group">
             <label>Category</label>
             <select id="category">
-                <option value="Hand Tools">Hand Tools</option>
+                <option value="Hand Tools (Saws)">Hand Tools (Saws)</option>
+                <option value="Hand Tools (Edge)">Hand Tools (Edge)</option>
                 <option value="Power Tools">Power Tools</option>
+                <option value="Measuring & Marking">Measuring & Marking</option>
+                <option value="Clamping">Clamping</option>
                 <option value="Hardware">Hardware</option>
                 <option value="Consumables">Consumables</option>
+                <option value="Electrical">Electrical Components</option>
+                <option value="Lumber">Lumber</option>
+                <option value="Finishing">Finishing</option>
             </select>
         </div>
+
         <div class="input-group">
-            <label>Coordinate</label>
-            <select id="coordinate">
-                <option value="Wall-A">Wall A (Cleats)</option>
-                <option value="Wall-B">Wall B</option>
-                <option value="Cabinet-1">Mobile Cabinet</option>
-                <option value="Workbench">Workbench Drawer</option>
+            <label>Storage Zone</label>
+            <select id="zoneSelector" onchange="updateCoordinateOptions()">
+                <option value="Shelf">Shelves</option>
+                <option value="Drawer">Drawers</option>
+                <option value="Workbench">Workbench</option>
+                <option value="Closet">Closets</option>
             </select>
         </div>
+
+        <div class="input-group" id="coordDetailGroup">
+            <label id="detailLabel">Shelf Row & Col</label>
+            <div id="shelfInputs" style="display: flex; gap: 5px;">
+                <select id="rowSelect">
+                    <option value="0">0</option><option value="1">1</option>
+                    <option value="1bis">1bis</option><option value="2">2</option>
+                    <option value="2bis">2bis</option><option value="3">3</option>
+                    <option value="3bis">3bis</option>
+                </select>
+                <select id="colSelect">
+                    <option value="A">A</option><option value="B">B</option>
+                    <option value="C">C</option><option value="D">D</option>
+                </select>
+            </div>
+            <select id="drawerSelect" style="display: none;">
+                <option value="1">Drawer 1</option><option value="2">Drawer 2</option>
+                <option value="3">Drawer 3</option><option value="4">Drawer 4</option>
+                <option value="5">Drawer 5</option><option value="6">Drawer 6</option>
+                <option value="7">Drawer 7</option><option value="8">Drawer 8</option>
+            </select>
+            <input type="text" id="manualCoord" style="display: none;" placeholder="e.g. Closet-1">
+        </div>
+
         <div class="input-group">
             <label>Quantity</label>
-            <input type="number" id="quantity" value="10">
+            <input type="number" id="quantity" value="1">
         </div>
+
+        <div class="input-group">
+            <label>Unit</label>
+            <select id="unit">
+                <option value="Pcs">Pieces</option>
+                <option value="Box">Box</option>
+                <option value="Liter">Liters</option>
+                <option value="Set">Set</option>
+                <option value="Meter">Meters</option>
+            </select>
+        </div>
+
         <div class="input-group checkbox-group">
             <input type="checkbox" id="isConsumable">
-            <label for="isConsumable" style="margin-bottom: 0;">Is Consumable?</label>
+            <label for="isConsumable">Consumable?</label>
         </div>
+
         <div class="input-group">
             <label>Status</label>
             <select id="status">
                 <option value="Operational">Operational</option>
+                <option value="Needs Sharpening">Needs Sharpening</option>
+                <option value="Needs Maintenance">Needs Maintenance</option>
                 <option value="In Stock">In Stock</option>
                 <option value="Low Stock">Low Stock</option>
-                <option value="Needs Maintenance">Needs Maintenance</option>
             </select>
         </div>
-        <div class="input-group">
-            <label>Date Added</label>
-            <input type="date" id="dateAdded">
-        </div>
+
         <button class="log-btn" onclick="logItem()">Log to Workshop Registry</button>
     </div>
 
     <div class="search-container">
-        <div class="input-group">
-            <label>Search Inventory</label>
-            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Filter items...">
-        </div>
-
+        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search inventory..." style="width: 100%; margin-bottom: 10px;">
         <table class="inventory-table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Item</th>
-                    <th>Category</th>
-                    <th>Coord</th>
-                    <th>Qty</th>
-                    <th>Date</th>
-                    <th>Actions</th>
+                    <th>ID</th><th>Item</th><th>Category</th><th>Location</th><th>Qty/Unit</th><th>Date</th><th>Actions</th>
                 </tr>
             </thead>
-            <tbody id="inventoryBody">
-                </tbody>
+            <tbody id="inventoryBody"></tbody>
         </table>
     </div>
 </div>
 
 <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxRRK7Ryb4S6VgWulRJrC2SVF2vlXM6qL0O4GYjbgPO-8QhJNBcjxRE4_jX89pKNY6fuw/exec';
-    document.getElementById('dateAdded').valueAsDate = new Date();
 
-    // FETCH DATA ON LOAD
+    function updateCoordinateOptions() {
+        const zone = document.getElementById('zoneSelector').value;
+        const shelfInputs = document.getElementById('shelfInputs');
+        const drawerSelect = document.getElementById('drawerSelect');
+        const manualCoord = document.getElementById('manualCoord');
+        const label = document.getElementById('detailLabel');
+
+        shelfInputs.style.display = (zone === 'Shelf') ? 'flex' : 'none';
+        drawerSelect.style.display = (zone === 'Drawer') ? 'block' : 'none';
+        manualCoord.style.display = (zone === 'Workbench' || zone === 'Closet') ? 'block' : 'none';
+
+        if(zone === 'Shelf') label.innerText = "Shelf Row & Col";
+        else if(zone === 'Drawer') label.innerText = "Select Drawer";
+        else if(zone === 'Workbench') { label.innerText = "Location Info"; manualCoord.value = "MW-Shelf"; }
+        else label.innerText = "Closet Name";
+    }
+
+    function logItem() {
+        const zone = document.getElementById('zoneSelector').value;
+        let coordValue = "";
+        if(zone === 'Shelf') coordValue = "S" + document.getElementById('rowSelect').value + "-" + document.getElementById('colSelect').value;
+        else if(zone === 'Drawer') coordValue = "Drawer-" + document.getElementById('drawerSelect').value;
+        else coordValue = document.getElementById('manualCoord').value;
+
+        const item = {
+            id: "T-" + Date.now().toString().slice(-6),
+            name: document.getElementById('itemName').value,
+            category: document.getElementById('category').value,
+            coord: coordValue,
+            qty: document.getElementById('quantity').value,
+            unit: document.getElementById('unit').value,
+            isConsumable: document.getElementById('isConsumable').checked,
+            status: document.getElementById('status').value,
+            date: new Date().toLocaleDateString()
+        };
+
+        if(!item.name) return alert("Please enter an item name.");
+
+        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(item) })
+        .then(() => { alert("Logged: " + item.id); location.reload(); });
+    }
+
     window.onload = function() {
-        fetch(SCRIPT_URL)
-        .then(response => response.json())
-        .then(data => {
+        fetch(SCRIPT_URL).then(r => r.json()).then(data => {
             const table = document.getElementById('inventoryBody');
-            table.innerHTML = ""; // Clear existing table
             data.forEach(item => {
-                let rowClass = (item.isConsumable && item.qty <= 2) ? "low-stock" : "";
-                const row = `<tr class="${rowClass}">
+                const row = `<tr>
                     <td>${item.id}</td>
-                    <td>${item.name} ${item.isConsumable ? '📦' : ''}</td>
+                    <td>${item.name}</td>
                     <td>${item.category}</td>
                     <td>${item.coord}</td>
-                    <td>${item.qty}</td>
+                    <td>${item.qty} ${item.unit || ''}</td>
                     <td>${item.date}</td>
-                    <td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+                    <td><button class="delete-btn">Delete</button></td>
                 </tr>`;
                 table.innerHTML += row;
             });
-        })
-        .catch(err => console.error("Could not load initial data:", err));
+        });
     };
-
-    function logItem() {
-        const autoID = "T-" + Date.now().toString().slice(-6);
-        const qty = parseInt(document.getElementById('quantity').value);
-        const isConsumable = document.getElementById('isConsumable').checked;
-
-        const item = {
-            id: autoID,
-            name: document.getElementById('itemName').value,
-            category: document.getElementById('category').value,
-            coord: document.getElementById('coordinate').value,
-            qty: qty,
-            isConsumable: isConsumable,
-            status: document.getElementById('status').value,
-            date: document.getElementById('dateAdded').value
-        };
-
-        if(!item.name) {
-            alert("Please enter an item name.");
-            return;
-        }
-
-        // Add to local UI immediately
-        let rowClass = (isConsumable && qty <= 2) ? "low-stock" : "";
-        const table = document.getElementById('inventoryBody');
-        const row = `<tr class="${rowClass}">
-            <td>${item.id}</td>
-            <td>${item.name} ${isConsumable ? '📦' : ''}</td>
-            <td>${item.category}</td>
-            <td>${item.coord}</td>
-            <td>${item.qty}</td>
-            <td>${item.date}</td>
-            <td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
-        </tr>`;
-        table.innerHTML += row;
-
-        // Reset fields
-        document.getElementById('itemName').value = '';
-        document.getElementById('isConsumable').checked = false;
-        
-        // POST to Sheets
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify(item)
-        })
-        .then(() => alert("Item " + item.id + " logged successfully!"))
-        .catch(error => console.error('Error logging item:', error));
-    }
-
-    function filterTable() {
-        const input = document.getElementById("searchInput");
-        const filter = input.value.toUpperCase();
-        const rows = document.getElementById("inventoryBody").getElementsByTagName("tr");
-        for (let i = 0; i < rows.length; i++) {
-            const text = rows[i].textContent || rows[i].innerText;
-            rows[i].style.display = text.toUpperCase().indexOf(filter) > -1 ? "" : "none";
-        }
-    }
-
-    function deleteRow(btn) {
-        if(confirm("Are you sure you want to remove this item?")) {
-            const row = btn.parentNode.parentNode;
-            row.parentNode.removeChild(row);
-        }
-    }
 </script>
-
 </body>
 </html>
