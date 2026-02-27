@@ -10,7 +10,7 @@
             --workshop-accent: #5d4037;
             --text-color: #2c3e50;
             --border-color: #d7ccc8;
-            --low-stock-warning: #fff9c4; /* Soft yellow for warnings */
+            --low-stock-warning: #fff9c4;
         }
 
         body {
@@ -116,7 +116,6 @@
             color: var(--workshop-accent);
         }
 
-        /* Low stock style */
         .low-stock {
             background-color: var(--low-stock-warning) !important;
         }
@@ -209,7 +208,32 @@
 </div>
 
 <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxRRK7Ryb4S6VgWulRJrC2SVF2vlXM6qL0O4GYjbgPO-8QhJNBcjxRE4_jX89pKNY6fuw/exec';
     document.getElementById('dateAdded').valueAsDate = new Date();
+
+    // FETCH DATA ON LOAD
+    window.onload = function() {
+        fetch(SCRIPT_URL)
+        .then(response => response.json())
+        .then(data => {
+            const table = document.getElementById('inventoryBody');
+            table.innerHTML = ""; // Clear existing table
+            data.forEach(item => {
+                let rowClass = (item.isConsumable && item.qty <= 2) ? "low-stock" : "";
+                const row = `<tr class="${rowClass}">
+                    <td>${item.id}</td>
+                    <td>${item.name} ${item.isConsumable ? '📦' : ''}</td>
+                    <td>${item.category}</td>
+                    <td>${item.coord}</td>
+                    <td>${item.qty}</td>
+                    <td>${item.date}</td>
+                    <td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+                </tr>`;
+                table.innerHTML += row;
+            });
+        })
+        .catch(err => console.error("Could not load initial data:", err));
+    };
 
     function logItem() {
         const autoID = "T-" + Date.now().toString().slice(-6);
@@ -232,9 +256,8 @@
             return;
         }
 
-        // Apply low stock warning class if consumable and qty <= 2
+        // Add to local UI immediately
         let rowClass = (isConsumable && qty <= 2) ? "low-stock" : "";
-
         const table = document.getElementById('inventoryBody');
         const row = `<tr class="${rowClass}">
             <td>${item.id}</td>
@@ -247,22 +270,23 @@
         </tr>`;
         table.innerHTML += row;
 
+        // Reset fields
         document.getElementById('itemName').value = '';
         document.getElementById('isConsumable').checked = false;
         
-        fetch('https://script.google.com/macros/s/AKfycbxRRK7Ryb4S6VgWulRJrC2SVF2vlXM6qL0O4GYjbgPO-8QhJNBcjxRE4_jX89pKNY6fuw/exec', {
+        // POST to Sheets
+        fetch(SCRIPT_URL, {
             method: 'POST',
             body: JSON.stringify(item)
         })
         .then(() => alert("Item " + item.id + " logged successfully!"))
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error logging item:', error));
     }
 
     function filterTable() {
         const input = document.getElementById("searchInput");
         const filter = input.value.toUpperCase();
         const rows = document.getElementById("inventoryBody").getElementsByTagName("tr");
-
         for (let i = 0; i < rows.length; i++) {
             const text = rows[i].textContent || rows[i].innerText;
             rows[i].style.display = text.toUpperCase().indexOf(filter) > -1 ? "" : "none";
