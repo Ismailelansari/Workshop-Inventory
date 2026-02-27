@@ -10,6 +10,7 @@
             --workshop-accent: #5d4037;
             --text-color: #2c3e50;
             --border-color: #d7ccc8;
+            --low-stock-warning: #fff9c4; /* Soft yellow for warnings */
         }
 
         body {
@@ -24,7 +25,7 @@
         }
 
         .container {
-            max-width: 950px;
+            max-width: 1000px;
             width: 100%;
             background: white;
             padding: 30px;
@@ -44,7 +45,7 @@
 
         .input-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -52,6 +53,13 @@
         .input-group {
             display: flex;
             flex-direction: column;
+        }
+
+        .checkbox-group {
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            padding-top: 25px;
         }
 
         label {
@@ -108,6 +116,11 @@
             color: var(--workshop-accent);
         }
 
+        /* Low stock style */
+        .low-stock {
+            background-color: var(--low-stock-warning) !important;
+        }
+
         .delete-btn {
             background-color: #e74c3c;
             color: white;
@@ -127,7 +140,7 @@
     <div class="input-grid">
         <div class="input-group">
             <label>Item Name</label>
-            <input type="text" id="itemName" placeholder="e.g. Ryoba Saw">
+            <input type="text" id="itemName" placeholder="e.g. Wood Glue">
         </div>
         <div class="input-group">
             <label>Category</label>
@@ -135,7 +148,7 @@
                 <option value="Hand Tools">Hand Tools</option>
                 <option value="Power Tools">Power Tools</option>
                 <option value="Hardware">Hardware</option>
-                <option value="Lumber">Lumber</option>
+                <option value="Consumables">Consumables</option>
             </select>
         </div>
         <div class="input-group">
@@ -144,4 +157,125 @@
                 <option value="Wall-A">Wall A (Cleats)</option>
                 <option value="Wall-B">Wall B</option>
                 <option value="Cabinet-1">Mobile Cabinet</option>
-                <option value="Workbench">
+                <option value="Workbench">Workbench Drawer</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Quantity</label>
+            <input type="number" id="quantity" value="10">
+        </div>
+        <div class="input-group checkbox-group">
+            <input type="checkbox" id="isConsumable">
+            <label for="isConsumable" style="margin-bottom: 0;">Is Consumable?</label>
+        </div>
+        <div class="input-group">
+            <label>Status</label>
+            <select id="status">
+                <option value="Operational">Operational</option>
+                <option value="In Stock">In Stock</option>
+                <option value="Low Stock">Low Stock</option>
+                <option value="Needs Maintenance">Needs Maintenance</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Date Added</label>
+            <input type="date" id="dateAdded">
+        </div>
+        <button class="log-btn" onclick="logItem()">Log to Workshop Registry</button>
+    </div>
+
+    <div class="search-container">
+        <div class="input-group">
+            <label>Search Inventory</label>
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Filter items...">
+        </div>
+
+        <table class="inventory-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Coord</th>
+                    <th>Qty</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="inventoryBody">
+                </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.getElementById('dateAdded').valueAsDate = new Date();
+
+    function logItem() {
+        const autoID = "T-" + Date.now().toString().slice(-6);
+        const qty = parseInt(document.getElementById('quantity').value);
+        const isConsumable = document.getElementById('isConsumable').checked;
+
+        const item = {
+            id: autoID,
+            name: document.getElementById('itemName').value,
+            category: document.getElementById('category').value,
+            coord: document.getElementById('coordinate').value,
+            qty: qty,
+            isConsumable: isConsumable,
+            status: document.getElementById('status').value,
+            date: document.getElementById('dateAdded').value
+        };
+
+        if(!item.name) {
+            alert("Please enter an item name.");
+            return;
+        }
+
+        // Apply low stock warning class if consumable and qty <= 2
+        let rowClass = (isConsumable && qty <= 2) ? "low-stock" : "";
+
+        const table = document.getElementById('inventoryBody');
+        const row = `<tr class="${rowClass}">
+            <td>${item.id}</td>
+            <td>${item.name} ${isConsumable ? '📦' : ''}</td>
+            <td>${item.category}</td>
+            <td>${item.coord}</td>
+            <td>${item.qty}</td>
+            <td>${item.date}</td>
+            <td><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+        </tr>`;
+        table.innerHTML += row;
+
+        document.getElementById('itemName').value = '';
+        document.getElementById('isConsumable').checked = false;
+        
+        fetch('https://script.google.com/macros/s/AKfycbxRRK7Ryb4S6VgWulRJrC2SVF2vlXM6qL0O4GYjbgPO-8QhJNBcjxRE4_jX89pKNY6fuw/exec', {
+            method: 'POST',
+            body: JSON.stringify(item)
+        })
+        .then(() => alert("Item " + item.id + " logged successfully!"))
+        .catch(error => console.error('Error:', error));
+    }
+
+    function filterTable() {
+        const input = document.getElementById("searchInput");
+        const filter = input.value.toUpperCase();
+        const rows = document.getElementById("inventoryBody").getElementsByTagName("tr");
+
+        for (let i = 0; i < rows.length; i++) {
+            const text = rows[i].textContent || rows[i].innerText;
+            rows[i].style.display = text.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+        }
+    }
+
+    function deleteRow(btn) {
+        if(confirm("Are you sure you want to remove this item?")) {
+            const row = btn.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+    }
+</script>
+
+</body>
+</html>
