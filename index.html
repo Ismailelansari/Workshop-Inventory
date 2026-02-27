@@ -10,7 +10,6 @@
             --workshop-accent: #5d4037;
             --text-color: #2c3e50;
             --border-color: #d7ccc8;
-            --low-stock-warning: #fff9c4;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -34,7 +33,6 @@
         .inventory-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         .inventory-table th, .inventory-table td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; }
         .inventory-table th { background-color: #efebe9; color: var(--workshop-accent); }
-        .low-stock { background-color: var(--low-stock-warning) !important; }
         .delete-btn { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
@@ -67,7 +65,7 @@
                 <select id="rowSelect"><option>0</option><option>1</option><option>1bis</option><option>2</option><option>2bis</option><option>3</option><option>3bis</option></select>
                 <select id="colSelect"><option>A</option><option>B</option><option>C</option><option>D</option></select>
             </div>
-            <select id="drawerSelect" style="display: none;"><option value="1">Drawer 1</option><option value="2">Drawer 2</option><option value="8">Drawer 8</option></select>
+            <select id="drawerSelect" style="display: none;"><option value="1">Drawer 1</option><option value="8">Drawer 8</option></select>
             <input type="text" id="manualCoord" style="display: none;" value="MW-Shelf">
         </div>
         <div class="input-group"><label>Quantity</label><input type="number" id="quantity" value="1"></div>
@@ -123,7 +121,8 @@
         fetch(SCRIPT_URL).then(r => r.json()).then(data => {
             const table = document.getElementById('inventoryBody');
             data.forEach(item => {
-                table.innerHTML += `<tr><td>${item.id}</td><td>${item.name}</td><td>${item.category}</td><td>${item.coord}</td><td>${item.qty} ${item.unit}</td><td>${item.date}</td><td>${item.status}</td><td><button class="delete-btn">Delete</button></td></tr>`;
+                const badge = item.isConsumable ? '📦' : '';
+                table.innerHTML += `<tr><td>${item.id}</td><td>${item.name} ${badge}</td><td>${item.category}</td><td>${item.coord}</td><td>${item.qty} ${item.unit}</td><td>${item.date}</td><td>${item.status}</td><td><button class="delete-btn">Delete</button></td></tr>`;
             });
         });
     };
