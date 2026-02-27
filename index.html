@@ -3,73 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ismail's Workshop Inventory</title>
+    <title>Ismail's Workshop Registry</title>
     <style>
         :root {
-        --workshop-bg: #f4f1ea;
-        --workshop-accent: #5d4037;
-        --text-color: #2c3e50;
-        --border-color: #d7ccc8;
-    }
-
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: var(--workshop-bg);
-        color: var(--text-color);
-        margin: 0; padding: 10px;
-        display: flex; flex-direction: column; align-items: center;
-    }
-
-    .container {
-        max-width: 1100px; width: 100%;
-        background: white; padding: 20px; border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        border-top: 5px solid var(--workshop-accent);
-        box-sizing: border-box;
-    }
-
-    h1 { text-align: center; color: var(--workshop-accent); font-size: 1.2rem; text-transform: uppercase; margin-bottom: 20px; }
-
-    /* Responsive Grid for Mobile */
-    .input-grid { 
-        display: grid; 
-        grid-template-columns: 1fr; /* Default to single column for mobile */
-        gap: 15px; 
-        margin-bottom: 20px; 
-    }
-
-    /* Desktop Grid Adjustment */
-    @media (min-width: 768px) {
-        .input-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-        body { padding: 20px; }
-        h1 { font-size: 1.5rem; }
-    }
-
-    .input-group { display: flex; flex-direction: column; }
-    label { font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: #7f8c8d; }
-    
-    /* Larger inputs for easier tapping */
-    input, select { 
-        padding: 12px; 
-        border: 1px solid var(--border-color); 
-        border-radius: 4px; 
-        font-size: 1rem; 
-    }
-
-    button.log-btn { 
-        padding: 15px; 
-        background: var(--workshop-accent); 
-        color: white; border: none; border-radius: 4px; 
-        cursor: pointer; font-weight: bold; font-size: 1rem;
-    }
-
-    /* Table Scroll for Mobile */
-    .search-container { overflow-x: auto; width: 100%; }
-    .inventory-table { width: 100%; border-collapse: collapse; min-width: 600px; }
-    
-    .inventory-table th, .inventory-table td { 
-        text-align: left; padding: 10px; border-bottom: 1px solid var(--border-color); font-size: 0.8rem; 
-    }
+            --workshop-bg: #f4f1ea;
+            --workshop-accent: #5d4037;
+            --text-color: #2c3e50;
+            --border-color: #d7ccc8;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--workshop-bg);
+            color: var(--text-color);
+            margin: 0; padding: 10px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .container {
+            max-width: 1100px; width: 100%;
+            background: white; padding: 20px; border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--workshop-accent);
+            box-sizing: border-box;
+        }
+        h1 { text-align: center; color: var(--workshop-accent); font-size: 1.2rem; text-transform: uppercase; margin-bottom: 20px; }
+        .input-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px; }
+        @media (min-width: 768px) {
+            .input-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+            body { padding: 20px; }
+            h1 { font-size: 1.5rem; }
+        }
+        .input-group { display: flex; flex-direction: column; }
+        label { font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: #7f8c8d; }
+        input, select { padding: 12px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem; }
+        button.log-btn { padding: 15px; background: var(--workshop-accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+        .search-container { overflow-x: auto; width: 100%; margin-top: 20px; }
+        .inventory-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        .inventory-table th, .inventory-table td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; }
+        .inventory-table th { background-color: #efebe9; color: var(--workshop-accent); }
+        .delete-btn { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
     </style>
 </head>
 <body>
@@ -81,6 +52,7 @@
         <div class="input-group"><label>Category</label>
             <select id="category">
                 <option value="Hand Tools (Saws)">Hand Tools (Saws)</option>
+                <option value="Hand Tools (Edge)">Hand Tools (Edge)</option>
                 <option value="Power Tools">Power Tools</option>
                 <option value="Hardware">Hardware</option>
                 <option value="Electrical">Electrical Components</option>
@@ -106,7 +78,7 @@
         </div>
         <div class="input-group"><label>Quantity</label><input type="number" id="quantity" value="1"></div>
         <div class="input-group"><label>Unit</label>
-            <select id="unit"><option>Pcs</option><option>Box</option><option>Liter</option></select>
+            <select id="unit"><option>Pcs</option><option>Box</option><option>Liter</option><option>Set</option></select>
         </div>
         <div class="input-group" style="flex-direction:row; align-items:center; gap:10px; padding-top:25px;">
             <input type="checkbox" id="isConsumable"><label style="margin:0;">Consumable?</label>
@@ -114,7 +86,7 @@
         <button class="log-btn" onclick="logItem()">Log to Workshop Registry</button>
     </div>
     <div class="search-container">
-        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search inventory..." style="width:100%; padding:10px; margin-bottom:10px;">
+        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search inventory..." style="width:100%; padding:10px; margin-bottom:10px; box-sizing: border-box;">
         <table class="inventory-table">
             <thead><tr><th>ID</th><th>Item</th><th>Category</th><th>Coord</th><th>Qty/Unit</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
             <tbody id="inventoryBody"></tbody>
@@ -149,19 +121,48 @@
             isConsumable: document.getElementById('isConsumable').checked
         };
 
+        if(!item.name) return alert("Please enter an item name.");
+
         fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(item) })
         .then(() => { alert("Logged successfully!"); location.reload(); });
+    }
+
+    function deleteRow(btn, id) {
+        if (confirm("Are you certain you wish to permanently remove this item?")) {
+            const row = btn.closest('tr');
+            row.remove();
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: "delete", id: id })
+            }).then(() => alert("Item removed from database."));
+        }
     }
 
     window.onload = function() {
         fetch(SCRIPT_URL).then(r => r.json()).then(data => {
             const table = document.getElementById('inventoryBody');
             data.forEach(item => {
-                const badge = item.isConsumable ? '📦' : '';
-                table.innerHTML += `<tr><td>${item.id}</td><td>${item.name} ${badge}</td><td>${item.category}</td><td>${item.coord}</td><td>${item.qty} ${item.unit}</td><td>${item.date}</td><td>${item.status}</td><td><button class="delete-btn">Delete</button></td></tr>`;
+                table.innerHTML += `<tr>
+                    <td>${item.id}</td>
+                    <td>${item.name} ${item.isConsumable ? '📦' : ''}</td>
+                    <td>${item.category}</td>
+                    <td>${item.coord}</td>
+                    <td>${item.qty} ${item.unit}</td>
+                    <td>${item.date}</td>
+                    <td>${item.status}</td>
+                    <td><button class="delete-btn" onclick="deleteRow(this, '${item.id}')">Delete</button></td>
+                </tr>`;
             });
         });
     };
+
+    function filterTable() {
+        const filter = document.getElementById("searchInput").value.toUpperCase();
+        const rows = document.getElementById("inventoryBody").getElementsByTagName("tr");
+        for (let row of rows) {
+            row.style.display = row.innerText.toUpperCase().includes(filter) ? "" : "none";
+        }
+    }
 </script>
 </body>
 </html>
