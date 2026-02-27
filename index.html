@@ -208,7 +208,10 @@
         // Clear Name field for next entry
         document.getElementById('itemName').value = '';
         
-        console.log("Submitting to Google Sheets logic...", item);
+        fetch('https://script.google.com/macros/s/AKfycbxRRK7Ryb4S6VgWulRJrC2SVF2vlXM6qL0O4GYjbgPO-8QhJNBcjxRE4_jX89pKNY6fuw/exec', {
+  method: 'POST',
+  body: JSON.stringify(item)
+}).then(() => alert("Item logged successfully!"));
         // Here we would typically use fetch() to send data to a Google Apps Script Web App URL
     }
 </script>
