@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ismail's Workshop Inventory</title>
+    <style>
+        :root {
+            --workshop-bg: #f4f1ea;
+            --workshop-accent: #5d4037;
+            --text-color: #2c3e50;
+            --border-color: #d7ccc8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--workshop-bg);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--workshop-accent);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--workshop-accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #7f8c8d;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        button {
+            grid-column: 1 / -1;
+            padding: 12px;
+            background-color: var(--workshop-accent);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #4e342e;
+        }
+
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        .inventory-table th, .inventory-table td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.85rem;
+        }
+
+        .inventory-table th {
+            background-color: #efebe9;
+            color: var(--workshop-accent);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Workshop Inventory Log</h1>
+    
+    <div class="input-grid">
+        <div class="input-group">
+            <label>ID</label>
+            <input type="text" id="itemID" placeholder="e.g. T-001">
+        </div>
+        <div class="input-group">
+            <label>Item Name</label>
+            <input type="text" id="itemName" placeholder="e.g. Ryoba Saw">
+        </div>
+        <div class="input-group">
+            <label>Category</label>
+            <select id="category">
+                <option value="Hand Tools">Hand Tools</option>
+                <option value="Power Tools">Power Tools</option>
+                <option value="Hardware">Hardware</option>
+                <option value="Lumber">Lumber</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Coordinate</label>
+            <select id="coordinate">
+                <option value="Wall-A">Wall A (Cleats)</option>
+                <option value="Wall-B">Wall B</option>
+                <option value="Cabinet-1">Mobile Cabinet</option>
+                <option value="Workbench">Workbench Drawer</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Quantity</label>
+            <input type="number" id="quantity" value="1">
+        </div>
+        <div class="input-group">
+            <label>Status</label>
+            <select id="status">
+                <option value="Operational">Operational</option>
+                <option value="Maintenance">Needs Maintenance</option>
+                <option value="Sharpening">Needs Sharpening</option>
+                <option value="Lent Out">Lent Out</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Date Added</label>
+            <input type="date" id="dateAdded">
+        </div>
+        <button onclick="logItem()">Log to Workshop Registry</button>
+    </div>
+
+    <table class="inventory-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Item</th>
+                <th>Category</th>
+                <th>Coord</th>
+                <th>Qty</th>
+                <th>Status</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody id="inventoryBody">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    // Set default date to today
+    document.getElementById('dateAdded').valueAsDate = new Date();
+
+    function logItem() {
+        const item = {
+            id: document.getElementById('itemID').value,
+            name: document.getElementById('itemName').value,
+            category: document.getElementById('category').value,
+            coord: document.getElementById('coordinate').value,
+            qty: document.getElementById('quantity').value,
+            status: document.getElementById('status').value,
+            date: document.getElementById('dateAdded').value
+        };
+
+        if(!item.name) {
+            alert("Please enter an item name.");
+            return;
+        }
+
+        // Add to local UI table
+        const table = document.getElementById('inventoryBody');
+        const row = `<tr>
+            <td>${item.id}</td>
+            <td>${item.name}</td>
+            <td>${item.category}</td>
+            <td>${item.coord}</td>
+            <td>${item.qty}</td>
+            <td>${item.status}</td>
+            <td>${item.date}</td>
+        </tr>`;
+        table.innerHTML += row;
+
+        // Clear Name field for next entry
+        document.getElementById('itemName').value = '';
+        
+        console.log("Submitting to Google Sheets logic...", item);
+        // Here we would typically use fetch() to send data to a Google Apps Script Web App URL
+    }
+</script>
+
+</body>
+</html>
