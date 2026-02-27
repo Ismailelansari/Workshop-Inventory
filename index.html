@@ -6,34 +6,70 @@
     <title>Ismail's Workshop Inventory</title>
     <style>
         :root {
-            --workshop-bg: #f4f1ea;
-            --workshop-accent: #5d4037;
-            --text-color: #2c3e50;
-            --border-color: #d7ccc8;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--workshop-bg);
-            color: var(--text-color);
-            margin: 0; padding: 20px;
-            display: flex; flex-direction: column; align-items: center;
-        }
-        .container {
-            max-width: 1100px; width: 100%;
-            background: white; padding: 30px; border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border-top: 5px solid var(--workshop-accent);
-        }
-        h1 { text-align: center; color: var(--workshop-accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; }
-        .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .input-group { display: flex; flex-direction: column; }
-        label { font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: #7f8c8d; }
-        input, select { padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; }
-        button.log-btn { grid-column: 1 / -1; padding: 12px; background: var(--workshop-accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .inventory-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .inventory-table th, .inventory-table td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; }
-        .inventory-table th { background-color: #efebe9; color: var(--workshop-accent); }
-        .delete-btn { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+        --workshop-bg: #f4f1ea;
+        --workshop-accent: #5d4037;
+        --text-color: #2c3e50;
+        --border-color: #d7ccc8;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--workshop-bg);
+        color: var(--text-color);
+        margin: 0; padding: 10px;
+        display: flex; flex-direction: column; align-items: center;
+    }
+
+    .container {
+        max-width: 1100px; width: 100%;
+        background: white; padding: 20px; border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border-top: 5px solid var(--workshop-accent);
+        box-sizing: border-box;
+    }
+
+    h1 { text-align: center; color: var(--workshop-accent); font-size: 1.2rem; text-transform: uppercase; margin-bottom: 20px; }
+
+    /* Responsive Grid for Mobile */
+    .input-grid { 
+        display: grid; 
+        grid-template-columns: 1fr; /* Default to single column for mobile */
+        gap: 15px; 
+        margin-bottom: 20px; 
+    }
+
+    /* Desktop Grid Adjustment */
+    @media (min-width: 768px) {
+        .input-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+        body { padding: 20px; }
+        h1 { font-size: 1.5rem; }
+    }
+
+    .input-group { display: flex; flex-direction: column; }
+    label { font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: #7f8c8d; }
+    
+    /* Larger inputs for easier tapping */
+    input, select { 
+        padding: 12px; 
+        border: 1px solid var(--border-color); 
+        border-radius: 4px; 
+        font-size: 1rem; 
+    }
+
+    button.log-btn { 
+        padding: 15px; 
+        background: var(--workshop-accent); 
+        color: white; border: none; border-radius: 4px; 
+        cursor: pointer; font-weight: bold; font-size: 1rem;
+    }
+
+    /* Table Scroll for Mobile */
+    .search-container { overflow-x: auto; width: 100%; }
+    .inventory-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+    
+    .inventory-table th, .inventory-table td { 
+        text-align: left; padding: 10px; border-bottom: 1px solid var(--border-color); font-size: 0.8rem; 
+    }
     </style>
 </head>
 <body>
