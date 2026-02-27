@@ -84,10 +84,17 @@
             background-color: #4e342e;
         }
 
+        /* Search Section Styling */
+        .search-container {
+            margin-top: 30px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
         .inventory-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 30px;
+            margin-top: 15px;
         }
 
         .inventory-table th, .inventory-table td {
@@ -155,21 +162,28 @@
         <button onclick="logItem()">Log to Workshop Registry</button>
     </div>
 
-    <table class="inventory-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Item</th>
-                <th>Category</th>
-                <th>Coord</th>
-                <th>Qty</th>
-                <th>Status</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody id="inventoryBody">
-            </tbody>
-    </table>
+    <div class="search-container">
+        <div class="input-group">
+            <label>Search Inventory</label>
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Filter by name, category, or status...">
+        </div>
+
+        <table class="inventory-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Coord</th>
+                    <th>Qty</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="inventoryBody">
+                </tbody>
+        </table>
+    </div>
 </div>
 
 <script>
@@ -192,7 +206,7 @@
             return;
         }
 
-        // Add to local UI table
+        // 1. Add to local UI table
         const table = document.getElementById('inventoryBody');
         const row = `<tr>
             <td>${item.id}</td>
@@ -205,14 +219,33 @@
         </tr>`;
         table.innerHTML += row;
 
-        // Clear Name field for next entry
+        // 2. Clear Name field for next entry
         document.getElementById('itemName').value = '';
         
+        // 3. Send data to Google Sheets
         fetch('https://script.google.com/macros/s/AKfycbxRRK7Ryb4S6VgWulRJrC2SVF2vlXM6qL0O4GYjbgPO-8QhJNBcjxRE4_jX89pKNY6fuw/exec', {
-  method: 'POST',
-  body: JSON.stringify(item)
-}).then(() => alert("Item logged successfully!"));
-        // Here we would typically use fetch() to send data to a Google Apps Script Web App URL
+            method: 'POST',
+            body: JSON.stringify(item)
+        })
+        .then(() => alert("Item logged successfully to Google Sheets!"))
+        .catch(error => console.error('Error:', error));
+    }
+
+    // Search Logic
+    function filterTable() {
+        const input = document.getElementById("searchInput");
+        const filter = input.value.toUpperCase();
+        const tableBody = document.getElementById("inventoryBody");
+        const rows = tableBody.getElementsByTagName("tr");
+
+        for (let i = 0; i < rows.length; i++) {
+            const textContent = rows[i].textContent || rows[i].innerText;
+            if (textContent.toUpperCase().indexOf(filter) > -1) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
     }
 </script>
 
